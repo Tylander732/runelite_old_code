@@ -24,6 +24,7 @@ class QuestItemCheckPlugin{
     private final QueryRunner queryRunner;
     private final ItemManager itemManager;
 
+    //class constructor
     @Inject
     QuestItemCheckPlugin(QueryRunner queryRunner, ItemManager itemManager)
     {
