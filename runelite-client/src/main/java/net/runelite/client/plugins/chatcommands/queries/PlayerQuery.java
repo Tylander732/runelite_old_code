@@ -22,48 +22,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import net.runelite.api.Client;
-import net.runelite.api.GameObject;
-import net.runelite.api.Tile;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
+import net.runelite.api.Player;
 
 /**
- * Used for getting game objects in view,deprecated as of existence of GameObject spawn events
+ * Used for getting players in view,deprecated as of existence of Player spawn events
  *
- * @see net.runelite.api.events.GameObjectSpawned
- * @see net.runelite.api.events.GameObjectDespawned
- * @see net.runelite.api.events.GameObjectChanged
+ * @see net.runelite.api.events.PlayerSpawned
+ * @see net.runelite.api.events.PlayerDespawned
  */
 @Deprecated
-public class GameObjectQuery extends TileObjectQuery<GameObject, GameObjectQuery>
+public class PlayerQuery extends ActorQuery<Player, PlayerQuery>
 {
 	@Override
-	public GameObject[] result(Client client)
+	public Player[] result(Client client)
 	{
-		return getGameObjects(client).stream()
-			.filter(Objects::nonNull)
+		return client.getPlayers().stream()
 			.filter(predicate)
-			.distinct()
-			.toArray(GameObject[]::new);
-	}
-
-	private Collection<GameObject> getGameObjects(Client client)
-	{
-		Collection<GameObject> objects = new ArrayList<>();
-		for (Tile tile : getTiles(client))
-		{
-			GameObject[] gameObjects = tile.getGameObjects();
-			if (gameObjects != null)
-			{
-				objects.addAll(Arrays.asList(gameObjects));
-			}
-		}
-		return objects;
+			.toArray(Player[]::new);
 	}
 }

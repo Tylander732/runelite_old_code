@@ -22,25 +22,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import net.runelite.api.Client;
-import net.runelite.api.Player;
+import net.runelite.api.GroundObject;
+import net.runelite.api.Tile;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
- * Used for getting players in view,deprecated as of existence of Player spawn events
+ * Used for getting ground objects in view,deprecated as of existence of Item spawn events
  *
- * @see net.runelite.api.events.PlayerSpawned
- * @see net.runelite.api.events.PlayerDespawned
+ * @see net.runelite.api.events.ItemSpawned
+ * @see net.runelite.api.events.ItemDespawned
+ * @see net.runelite.api.events.ItemQuantityChanged
  */
 @Deprecated
-public class PlayerQuery extends ActorQuery<Player, PlayerQuery>
+public class GroundObjectQuery extends TileObjectQuery<GroundObject, GroundObjectQuery>
 {
 	@Override
-	public Player[] result(Client client)
+	public GroundObject[] result(Client client)
 	{
-		return client.getPlayers().stream()
+		return getGroundObjects(client).stream()
+			.filter(Objects::nonNull)
 			.filter(predicate)
-			.toArray(Player[]::new);
+			.distinct()
+			.toArray(GroundObject[]::new);
+	}
+
+	private Collection<GroundObject> getGroundObjects(Client client)
+	{
+		Collection<GroundObject> objects = new ArrayList<>();
+		for (Tile tile : getTiles(client))
+		{
+			objects.add(tile.getGroundObject());
+		}
+		return objects;
 	}
 }

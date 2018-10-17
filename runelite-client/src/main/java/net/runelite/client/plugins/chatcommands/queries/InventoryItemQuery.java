@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Devin French <https://github.com/devinfrench>
+ * Copyright (c) 2016-2018, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,43 +22,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
-import net.runelite.api.Client;
-import net.runelite.api.Tile;
-import net.runelite.api.WallObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import net.runelite.api.Client;
+import net.runelite.api.InventoryID;
+import net.runelite.api.Item;
+import net.runelite.api.ItemContainer;
+import net.runelite.api.Query;
 
 /**
- * Used for getting wall objects in view,deprecated as of existence of Wall object spawn events
+ * Used for getting inventory items,deprecated as of existence of item container changed events
  *
- * @see net.runelite.api.events.WallObjectSpawned
- * @see net.runelite.api.events.WallObjectDespawned
- * @see net.runelite.api.events.WallObjectChanged
+ * @see net.runelite.api.events.ItemContainerChanged
  */
 @Deprecated
-public class WallObjectQuery extends TileObjectQuery<WallObject, WallObjectQuery>
+@RequiredArgsConstructor
+public class InventoryItemQuery extends Query<Item, InventoryItemQuery>
 {
+	private final InventoryID inventory;
+
 	@Override
-	public WallObject[] result(Client client)
+	public Item[] result(Client client)
 	{
-		return getWallObjects(client).stream()
-			.filter(Objects::nonNull)
-			.filter(predicate)
-			.distinct()
-			.toArray(WallObject[]::new);
+		ItemContainer container = client.getItemContainer(inventory);
+		if (container == null)
+		{
+			return null;
+		}
+		return Arrays.stream(container.getItems())
+				.filter(Objects::nonNull)
+				.filter(predicate)
+				.toArray(Item[]::new);
 	}
 
-	private Collection<WallObject> getWallObjects(Client client)
+	public InventoryItemQuery idEquals(int... ids)
 	{
-		Collection<WallObject> objects = new ArrayList<>();
-		for (Tile tile : getTiles(client))
+		predicate = and(item ->
 		{
-			objects.add(tile.getWallObject());
-		}
-		return objects;
+			for (int id : ids)
+			{
+				if (item.getId() == id)
+				{
+					return true;
+				}
+			}
+			return false;
+		});
+		return this;
 	}
+
 }

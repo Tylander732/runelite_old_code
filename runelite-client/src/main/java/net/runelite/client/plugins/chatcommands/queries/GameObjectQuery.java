@@ -22,42 +22,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import net.runelite.api.Client;
-import net.runelite.api.NPC;
+import net.runelite.api.GameObject;
+import net.runelite.api.Tile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
- * Used for getting NPCs in view,deprecated as of existence of NPC spawn events
+ * Used for getting game objects in view,deprecated as of existence of GameObject spawn events
  *
- * @see net.runelite.api.events.NpcSpawned
- * @see net.runelite.api.events.NpcDespawned
+ * @see net.runelite.api.events.GameObjectSpawned
+ * @see net.runelite.api.events.GameObjectDespawned
+ * @see net.runelite.api.events.GameObjectChanged
  */
 @Deprecated
-public class NPCQuery extends ActorQuery<NPC, NPCQuery>
+public class GameObjectQuery extends TileObjectQuery<GameObject, GameObjectQuery>
 {
 	@Override
-	public NPC[] result(Client client)
+	public GameObject[] result(Client client)
 	{
-		return client.getNpcs().stream()
-				.filter(predicate)
-				.toArray(NPC[]::new);
+		return getGameObjects(client).stream()
+			.filter(Objects::nonNull)
+			.filter(predicate)
+			.distinct()
+			.toArray(GameObject[]::new);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public NPCQuery idEquals(int... ids)
+
+	private Collection<GameObject> getGameObjects(Client client)
 	{
-		predicate = and(object ->
+		Collection<GameObject> objects = new ArrayList<>();
+		for (Tile tile : getTiles(client))
 		{
-			for (int id : ids)
+			GameObject[] gameObjects = tile.getGameObjects();
+			if (gameObjects != null)
 			{
-				if (object.getId() == id)
-				{
-					return true;
-				}
+				objects.addAll(Arrays.asList(gameObjects));
 			}
-			return false;
-		});
-		return (NPCQuery) this;
+		}
+		return objects;
 	}
 }

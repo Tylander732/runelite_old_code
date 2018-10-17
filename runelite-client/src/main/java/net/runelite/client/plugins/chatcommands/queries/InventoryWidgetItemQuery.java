@@ -22,7 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
@@ -34,14 +34,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-public class BankItemQuery extends WidgetItemQuery
+public class InventoryWidgetItemQuery extends WidgetItemQuery
 {
-	private static final int ITEM_EMPTY = 6512;
+	private static final WidgetInfo[] INVENTORY_WIDGET_INFOS =
+	{
+		WidgetInfo.DEPOSIT_BOX_INVENTORY_ITEMS_CONTAINER,
+		WidgetInfo.BANK_INVENTORY_ITEMS_CONTAINER,
+		WidgetInfo.SHOP_INVENTORY_ITEMS_CONTAINER,
+		WidgetInfo.GRAND_EXCHANGE_INVENTORY_ITEMS_CONTAINER,
+		WidgetInfo.GUIDE_PRICES_INVENTORY_ITEMS_CONTAINER,
+		WidgetInfo.EQUIPMENT_INVENTORY_ITEMS_CONTAINER,
+		WidgetInfo.INVENTORY
+	};
 
 	@Override
 	public WidgetItem[] result(Client client)
 	{
-		Collection<WidgetItem> widgetItems = getBankItems(client);
+		Collection<WidgetItem> widgetItems = getInventoryItems(client);
 		if (widgetItems != null)
 		{
 			return widgetItems.stream()
@@ -52,25 +61,33 @@ public class BankItemQuery extends WidgetItemQuery
 		return new WidgetItem[0];
 	}
 
-	private Collection<WidgetItem> getBankItems(Client client)
+	private Collection<WidgetItem> getInventoryItems(Client client)
 	{
 		Collection<WidgetItem> widgetItems = new ArrayList<>();
-		Widget bank = client.getWidget(WidgetInfo.BANK_ITEM_CONTAINER);
-		if (bank != null && !bank.isHidden())
+		for (WidgetInfo widgetInfo : INVENTORY_WIDGET_INFOS)
 		{
-			Widget[] children = bank.getDynamicChildren();
-			for (int i = 0; i < children.length; i++)
+			Widget inventory = client.getWidget(widgetInfo);
+			if (inventory == null || inventory.isHidden())
 			{
-				Widget child = children[i];
-				if (child.getItemId() == ITEM_EMPTY || child.isSelfHidden())
+				continue;
+			}
+			if (widgetInfo == WidgetInfo.INVENTORY)
+			{
+				widgetItems.addAll(inventory.getWidgetItems());
+				break;
+			}
+			else
+			{
+				Widget[] children = inventory.getDynamicChildren();
+				for (int i = 0; i < children.length; i++)
 				{
-					continue;
+					Widget child = children[i];
+					// set bounds to same size as default inventory
+					Rectangle bounds = child.getBounds();
+					bounds.setBounds(bounds.x - 1, bounds.y - 1, 32, 32);
+					widgetItems.add(new WidgetItem(child.getItemId(), child.getItemQuantity(), i, bounds));
 				}
-				// set bounds to same size as default inventory
-				Rectangle bounds = child.getBounds();
-				bounds.setBounds(bounds.x - 1, bounds.y - 1, 32, 32);
-				// Index is set to 0 because the widget's index does not correlate to the order in the bank
-				widgetItems.add(new WidgetItem(child.getItemId(), child.getItemQuantity(), 0, bounds));
+				break;
 			}
 		}
 		return widgetItems;

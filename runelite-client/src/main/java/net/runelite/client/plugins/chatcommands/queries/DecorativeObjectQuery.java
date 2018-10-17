@@ -22,10 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import net.runelite.api.Client;
-import net.runelite.api.GroundObject;
+import net.runelite.api.DecorativeObject;
 import net.runelite.api.Tile;
 
 import java.util.ArrayList;
@@ -33,31 +33,31 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * Used for getting ground objects in view,deprecated as of existence of Item spawn events
+ * Used for getting decorative objects in view, deprecated as of existence of DecorativeObject spawn events
  *
- * @see net.runelite.api.events.ItemSpawned
- * @see net.runelite.api.events.ItemDespawned
- * @see net.runelite.api.events.ItemQuantityChanged
+ * @see net.runelite.api.events.DecorativeObjectSpawned
+ * @see net.runelite.api.events.DecorativeObjectDespawned
+ * @see net.runelite.api.events.DecorativeObjectChanged
  */
 @Deprecated
-public class GroundObjectQuery extends TileObjectQuery<GroundObject, GroundObjectQuery>
+public class DecorativeObjectQuery extends TileObjectQuery<DecorativeObject, DecorativeObjectQuery>
 {
 	@Override
-	public GroundObject[] result(Client client)
+	public DecorativeObject[] result(Client client)
 	{
-		return getGroundObjects(client).stream()
+		return getDecorativeObjects(client).stream()
 			.filter(Objects::nonNull)
 			.filter(predicate)
 			.distinct()
-			.toArray(GroundObject[]::new);
+			.toArray(DecorativeObject[]::new);
 	}
 
-	private Collection<GroundObject> getGroundObjects(Client client)
+	private Collection<DecorativeObject> getDecorativeObjects(Client client)
 	{
-		Collection<GroundObject> objects = new ArrayList<>();
+		Collection<DecorativeObject> objects = new ArrayList<>();
 		for (Tile tile : getTiles(client))
 		{
-			objects.add(tile.getGroundObject());
+			objects.add(tile.getDecorativeObject());
 		}
 		return objects;
 	}

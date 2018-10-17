@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.inject.Inject;
 import net.runelite.api.Query;
-import net.runelite.api.queries.InventoryWidgetItemQuery;
+import net.runelite.client.plugins.chatcommands.queries.InventoryWidgetItemQuery;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;

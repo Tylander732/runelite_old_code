@@ -35,7 +35,7 @@ import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemID;
 import static net.runelite.api.ItemID.COINS_995;
 import static net.runelite.api.ItemID.PLATINUM_TOKEN;
-import net.runelite.api.queries.BankItemQuery;
+import net.runelite.client.plugins.chatcommands.queries.BankItemQuery;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.QueryRunner;

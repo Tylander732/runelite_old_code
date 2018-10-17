@@ -22,31 +22,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import static java.lang.Math.abs;
-import net.runelite.api.Actor;
+import net.runelite.api.Client;
+import net.runelite.api.Constants;
 import net.runelite.api.Query;
+import net.runelite.api.Scene;
+import net.runelite.api.Tile;
+import net.runelite.api.TileObject;
+
+import java.util.ArrayList;
+import java.util.List;
 import net.runelite.api.coords.LocalPoint;
+import net.runelite.api.coords.WorldPoint;
 
 /**
- * Used for getting players in view,deprecated as of existence of Actor spawn events
- *
- * @see net.runelite.api.events.ActorSpawned
- * @see net.runelite.api.events.ActorDespawned
+ * Used for getting decorative objects in view, deprecated as of existence of Object* spawn events
  */
 @Deprecated
-public abstract class ActorQuery<EntityType extends Actor, QueryType> extends Query<EntityType, QueryType>
+public abstract class TileObjectQuery<EntityType extends TileObject, QueryType> extends Query<EntityType, QueryType>
 {
-	@SuppressWarnings("unchecked")
-	public QueryType nameEquals(String... names)
+	protected List<Tile> getTiles(Client client)
 	{
-		predicate = and(actor ->
+		List<Tile> tilesList = new ArrayList<>();
+		Scene scene = client.getScene();
+		Tile[][][] tiles = scene.getTiles();
+		int z = client.getPlane();
+		for (int x = 0; x < Constants.SCENE_SIZE; ++x)
 		{
-			for (String name : names)
+			for (int y = 0; y < Constants.SCENE_SIZE; ++y)
 			{
-				String actorName = actor.getName();
-				if (actorName != null && actorName.equals(name))
+				Tile tile = tiles[z][x][y];
+				if (tile == null)
+				{
+					continue;
+				}
+				tilesList.add(tile);
+			}
+		}
+		return tilesList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public QueryType idEquals(int... ids)
+	{
+		predicate = and(object ->
+		{
+			for (int id : ids)
+			{
+				if (object.getId() == id)
 				{
 					return true;
 				}
@@ -57,48 +82,16 @@ public abstract class ActorQuery<EntityType extends Actor, QueryType> extends Qu
 	}
 
 	@SuppressWarnings("unchecked")
-	public QueryType nameContains(String... names)
+	public QueryType atWorldLocation(WorldPoint location)
 	{
-		predicate = and(actor ->
-		{
-			for (String name : names)
-			{
-				String actorName = actor.getName();
-				if (actorName != null && actorName.contains(name))
-				{
-					return true;
-				}
-			}
-			return false;
-		});
+		predicate = and(object -> object.getWorldLocation().equals(location));
 		return (QueryType) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public QueryType atLocalLocation(LocalPoint location)
 	{
-		predicate = and(actor -> actor.getLocalLocation().equals(location));
-		return (QueryType) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public QueryType isLevel(int level)
-	{
-		predicate = and(actor -> actor.getCombatLevel() == level);
-		return (QueryType) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public QueryType animationEquals(int animation)
-	{
-		predicate = and(actor -> actor.getAnimation() == animation);
-		return (QueryType) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public QueryType isInteractingWith(Actor actor)
-	{
-		predicate = and(a -> a.getInteracting().equals(actor));
+		predicate = and(object -> object.getLocalLocation().equals(location));
 		return (QueryType) this;
 	}
 

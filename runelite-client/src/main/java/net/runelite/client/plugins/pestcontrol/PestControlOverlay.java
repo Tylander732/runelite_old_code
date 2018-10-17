@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
 import net.runelite.api.Query;
-import net.runelite.api.queries.NPCQuery;
+import net.runelite.client.plugins.chatcommands.queries.NPCQuery;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import static net.runelite.client.plugins.pestcontrol.Portal.BLUE;

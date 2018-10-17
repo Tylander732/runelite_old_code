@@ -34,7 +34,7 @@ import net.runelite.api.ItemID;
 import net.runelite.api.Point;
 import net.runelite.api.Query;
 import net.runelite.api.Varbits;
-import net.runelite.api.queries.InventoryWidgetItemQuery;
+import net.runelite.client.plugins.chatcommands.queries.InventoryWidgetItemQuery;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.game.ItemManager;
 import static net.runelite.client.plugins.runepouch.config.RunePouchOverlayMode.BOTH;

@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.ItemID;
-import net.runelite.api.queries.BankItemQuery;
+import net.runelite.client.plugins.chatcommands.queries.BankItemQuery;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.util.QueryRunner;

@@ -22,42 +22,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.queries;
+package net.runelite.client.plugins.chatcommands.queries;
 
 import net.runelite.api.Client;
-import net.runelite.api.DecorativeObject;
 import net.runelite.api.Tile;
+import net.runelite.api.WallObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
 /**
- * Used for getting decorative objects in view, deprecated as of existence of DecorativeObject spawn events
+ * Used for getting wall objects in view,deprecated as of existence of Wall object spawn events
  *
- * @see net.runelite.api.events.DecorativeObjectSpawned
- * @see net.runelite.api.events.DecorativeObjectDespawned
- * @see net.runelite.api.events.DecorativeObjectChanged
+ * @see net.runelite.api.events.WallObjectSpawned
+ * @see net.runelite.api.events.WallObjectDespawned
+ * @see net.runelite.api.events.WallObjectChanged
  */
 @Deprecated
-public class DecorativeObjectQuery extends TileObjectQuery<DecorativeObject, DecorativeObjectQuery>
+public class WallObjectQuery extends TileObjectQuery<WallObject, WallObjectQuery>
 {
 	@Override
-	public DecorativeObject[] result(Client client)
+	public WallObject[] result(Client client)
 	{
-		return getDecorativeObjects(client).stream()
+		return getWallObjects(client).stream()
 			.filter(Objects::nonNull)
 			.filter(predicate)
 			.distinct()
-			.toArray(DecorativeObject[]::new);
+			.toArray(WallObject[]::new);
 	}
 
-	private Collection<DecorativeObject> getDecorativeObjects(Client client)
+	private Collection<WallObject> getWallObjects(Client client)
 	{
-		Collection<DecorativeObject> objects = new ArrayList<>();
+		Collection<WallObject> objects = new ArrayList<>();
 		for (Tile tile : getTiles(client))
 		{
-			objects.add(tile.getDecorativeObject());
+			objects.add(tile.getWallObject());
 		}
 		return objects;
 	}
