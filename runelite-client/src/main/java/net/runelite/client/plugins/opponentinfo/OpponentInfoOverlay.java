@@ -32,6 +32,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import javax.inject.Inject;
+
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.NPC;
@@ -93,19 +94,25 @@ class OpponentInfoOverlay extends Overlay
 			return null;
 		}
 
-		if (opponent.getName() != null && opponent.getHealth() > 0) {
+		if (opponent.getName() != null && opponent.getHealth() > 0)
+		{
 			lastRatio = opponent.getHealthRatio();
 			lastHealthScale = opponent.getHealth();
 			opponentName = Text.removeTags(opponent.getName());
 
 			lastMaxHealth = null;
-			if (opponent instanceof NPC) {
+			if (opponent instanceof NPC)
+			{
 				lastMaxHealth = opponentInfoPlugin.getOppInfoHealth().get(opponentName + "_" + opponent.getCombatLevel());
-			} else if (opponent instanceof Player) {
+			}
+			else if (opponent instanceof Player)
+			{
 				final HiscoreResult hiscoreResult = hiscoreManager.lookupAsync(opponentName, opponentInfoPlugin.getHiscoreEndpoint());
-				if (hiscoreResult != null) {
+				if (hiscoreResult != null)
+				{
 					final int hp = hiscoreResult.getHitpoints().getLevel();
-					if (hp > 0) {
+					if (hp > 0)
+					{
 						lastMaxHealth = hp;
 					}
 				}
@@ -113,9 +120,12 @@ class OpponentInfoOverlay extends Overlay
 
 			final Actor opponentsOpponent = opponent.getInteracting();
 			if (opponentsOpponent != null
-					&& (opponentsOpponent != client.getLocalPlayer() || client.getVar(Varbits.MULTICOMBAT_AREA) == 1)) {
+				&& (opponentsOpponent != client.getLocalPlayer() || client.getVar(Varbits.MULTICOMBAT_AREA) == 1))
+			{
 				opponentsOpponentName = Text.removeTags(opponentsOpponent.getName());
-			} else {
+			}
+			else
+			{
 				opponentsOpponentName = null;
 			}
 		}
@@ -132,8 +142,8 @@ class OpponentInfoOverlay extends Overlay
 		int textWidth = Math.max(ComponentConstants.STANDARD_WIDTH, fontMetrics.stringWidth(opponentName));
 		panelComponent.setPreferredSize(new Dimension(textWidth, 0));
 		panelComponent.getChildren().add(TitleComponent.builder()
-				.text(opponentName)
-				.build());
+			.text(opponentName)
+			.build());
 
 		// Health bar
 		if (lastRatio >= 0 && lastHealthScale > 0)
@@ -196,8 +206,8 @@ class OpponentInfoOverlay extends Overlay
 			textWidth = Math.max(textWidth, fontMetrics.stringWidth(opponentsOpponentName));
 			panelComponent.setPreferredSize(new Dimension(textWidth, 0));
 			panelComponent.getChildren().add(TitleComponent.builder()
-					.text(opponentsOpponentName)
-					.build());
+				.text(opponentsOpponentName)
+				.build());
 		}
 
 		return panelComponent.render(graphics);
